@@ -1,20 +1,19 @@
 import React, { useState } from 'react';
 // eslint-disable-next-line import/no-cycle
 import { MainPageLayout } from '../components/MainPageLayout';
+import { apiGet } from '../misc/config';
 
 export const Home = () => {
   const [input, setInput] = useState('');
+  const [results, setResults] = useState(null);
+
   const onInputChange = ev => {
     setInput(ev.target.value);
   };
   const onSearch = () => {
-    // https://api.tvmaze.com/search/shows?q=girls
-
-    fetch(`https://api.tvmaze.com/search/shows?q=${input}`).then(r =>
-      r.json().then(results => {
-        console.log(results);
-      })
-    );
+    apiGet(`/search/shows?q=${input}`).then(result => {
+      setResults(result);
+    });
   };
 
   const onKeyDown = ev => {
@@ -22,6 +21,22 @@ export const Home = () => {
     if (enterPressed) {
       onSearch();
     }
+  };
+
+  const renderResults = () => {
+    if (results && results.length === 0) {
+      return <div>No results</div>;
+    }
+    if (results && results.length > 0) {
+      return (
+        <div>
+          {results.map(item => (
+            <div key={item.show.id}>{item.show.name}</div>
+          ))}
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -35,6 +50,7 @@ export const Home = () => {
       <button type="button" onClick={onSearch}>
         Search
       </button>
+      {renderResults()}
     </MainPageLayout>
   );
 };
