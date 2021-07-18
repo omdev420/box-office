@@ -14,7 +14,7 @@ function showsReducer(prevState, action) {
 }
 
 function usePresistedReducer(reducer, initialState, key) {
-  const { state, dispatch } = useReducer(reducer, initialState, initial => {
+  const [state, dispatch] = useReducer(reducer, initialState, initial => {
     const presisted = localStorage.getItem(key);
 
     return presisted ? JSON.parse(presisted) : initial;
@@ -27,6 +27,6 @@ function usePresistedReducer(reducer, initialState, key) {
   return [state, dispatch];
 }
 
-export function useShow(key = 'shows') {
+export function useShows(key = 'shows') {
   return usePresistedReducer(showsReducer, [], key);
 }
